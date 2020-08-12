@@ -21,6 +21,11 @@
 #include <hw_sys.h>
 #include <hw_cache.h>
 
+#include "sys_clock_mgr.h"
+#include "sys_power_mgr.h"
+
+extern bool goto_deepsleep(void);
+
 #define GPREG_SET_FREEZE_REG (GPREG_BASE + 0x0)
 # define GPREG_SET_FREEZE_SYS_WDOG (1 << 3)
 
@@ -55,16 +60,41 @@ extern void da1469x_SystemInit(void);
 extern char _bss_vma;
 extern char _bss_len;
 
+__RETAINED_CODE void my_deepsleep_test(void) {
+
+
+
+	pm_set_sys_wakeup_mode(pm_sys_wakeup_mode_fast);
+	pm_prepare_sleep(pm_mode_extended_sleep);
+	while(1) {
+#if 0
+
+	goto_deepsleep();
+#else
+
+	__asm__ __volatile__ ("wfi");
+
+#endif
+	}
+	pm_resume_from_sleep();
+
+}
+
 void arch_init(void) {
 	int i;
 
 	/* Disable watchdog. It was enabled by bootloader. */
 	REG16_STORE(GPREG_SET_FREEZE_REG, GPREG_SET_FREEZE_SYS_WDOG);
 
-	for (i = 0; i < 1 * 1000 * 1000; i++) {
+	for (i = 0; i < 1 * 1000 * 1000 * 10; i++) {
 
 	}
-
+#if 0
+	while(1) {
+	//__asm__ __volatile__ ("wfi");
+		my_deepsleep_test();
+	}
+#endif
 	/* Default value is 512Kb. I will be changed only after software reset. */
 	if (hw_cache_flash_get_region_size() == HW_CACHE_FLASH_REGION_SZ_512KB) {
 		hw_cache_flash_set_region_size(HW_CACHE_FLASH_REGION_SZ_1MB);
