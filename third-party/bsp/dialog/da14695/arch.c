@@ -117,6 +117,9 @@ void arch_init(void) {
 	/* SystemInitPre and da1469x_SystemInit use BSS variables, so reinit BSS.*/
 	memset(&_bss_vma, 0, (int) &_bss_len);
 
+	extern void ad_pmu_init(void);
+	ad_pmu_init();
+
 	/* Enables the COM power domain (for example, it's used to enable GPIO) */
 	hw_sys_pd_com_enable();
 }
