@@ -18,11 +18,13 @@
 #include <config/custom_config_qspi.h>
 
 #include <sys_clock_mgr.h>
+#include <sys_power_mgr.h>
+#include <hw_rtc.h>
 #include <hw_sys.h>
 #include <hw_cache.h>
 
-#include "sys_clock_mgr.h"
-#include "sys_power_mgr.h"
+
+
 
 extern bool goto_deepsleep(void);
 
@@ -79,6 +81,14 @@ __RETAINED_CODE void my_deepsleep_test(void) {
 	pm_resume_from_sleep();
 
 }
+static void rtc_init(void)
+{
+        // Enable the RTC peripheral clock
+        hw_rtc_clock_enable();
+
+        // Start the RTC
+        hw_rtc_time_start();
+}
 
 void arch_init(void) {
 	int i;
@@ -120,8 +130,24 @@ void arch_init(void) {
 	extern void ad_pmu_init(void);
 	ad_pmu_init();
 
+	/* from system_init() */
+    /* Use appropriate XTAL for each device */
+    cm_sys_clk_init(sysclk_XTAL32M);
+    cm_apb_set_clock_divider(apb_div1);
+    cm_ahb_set_clock_divider(ahb_div1);
+   // cm_lp_clk_init();
+
+
+	/* from pm_system_init */
 	/* Enables the COM power domain (for example, it's used to enable GPIO) */
 	hw_sys_pd_com_enable();
+
+	hw_sys_setup_retmem();
+	hw_sys_set_cache_retained();
+
+	//qspi_operations_init();
+
+	rtc_init();
 }
 
 void arch_idle(void) {
