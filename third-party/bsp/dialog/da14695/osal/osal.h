@@ -64,6 +64,9 @@ extern int os_mutex_create(struct mutex **m_p);
 #define OS_QUEUE_FOREVER        ((unsigned) -1)
 
 #define OS_TIMER                void *
+#define OS_TIMER_SUCCESS        pdPASS
+#define OS_TIMER_FAIL           pdFAIL
+#define OS_TIMER_FOREVER        ((unsigned) -1)
 
 #define OS_BASE_TYPE            int
 #define OS_UBASE_TYPE           int
@@ -139,6 +142,35 @@ extern int os_mutex_create(struct mutex **m_p);
 
 #define OS_MUTEX_PUT(mutex) \
 	mutex_unlock(mutex)
+
+/**** Timer ****/
+/* FIXME */
+#define OS_TIMER_CREATE(name, period, reload, timer_id, callback) \
+	0
+
+#define OS_TIMER_START(timer, timeout) \
+	OS_TIMER_SUCCESS
+
+#define OS_TIMER_STOP(timer, timeout) \
+	OS_TIMER_SUCCESS
+
+#define OS_TIMER_START_FROM_ISR(timer) \
+	OS_TIMER_SUCCESS
+
+#define OS_TIMER_STOP_FROM_ISR(timer) \
+	OS_TIMER_SUCCESS
+
+#define OS_TICKS_2_MS(ticks) \
+	ticks
+
+#define OS_GET_TICK_COUNT() \
+	0
+
+#define OS_TIMER_CHANGE_PERIOD(timer, period, timeout) \
+	0
+
+#define OS_TIMER_CHANGE_PERIOD_FROM_ISR(timer, period) \
+	0
 
 /**** Malloc ****/
 
