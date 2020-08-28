@@ -143,34 +143,44 @@ extern int os_mutex_create(struct mutex **m_p);
 #define OS_MUTEX_PUT(mutex) \
 	mutex_unlock(mutex)
 
+#include <time.h>
+#include <kernel/time/time.h>
+#include <kernel/time/timer.h>
 /**** Timer ****/
-/* FIXME */
+extern struct sys_timer *os_timer_create(int period, int reload, void *handler );
+extern int os_timer_start(struct sys_timer * t );
+extern int os_timer_stop(struct sys_timer * t );
+extern int os_timer_change_period(struct sys_timer * t, int period );
+
 #define OS_TIMER_CREATE(name, period, reload, timer_id, callback) \
-	0
+			os_timer_create(period, reload, callback);
 
 #define OS_TIMER_START(timer, timeout) \
-	OS_TIMER_SUCCESS
+		os_timer_start(timer)
 
 #define OS_TIMER_STOP(timer, timeout) \
-	OS_TIMER_SUCCESS
+		os_timer_stop(timer)
 
 #define OS_TIMER_START_FROM_ISR(timer) \
-	OS_TIMER_SUCCESS
+		os_timer_start(timer)
 
 #define OS_TIMER_STOP_FROM_ISR(timer) \
-	OS_TIMER_SUCCESS
+		os_timer_stop(timer)
 
 #define OS_TICKS_2_MS(ticks) \
-	ticks
+		jiffies2ms(ticks)
+
+#define OS_TIME_TO_TICKS(ms) \
+		ms2jiffies(ms)
 
 #define OS_GET_TICK_COUNT() \
-	0
+		clock()
 
 #define OS_TIMER_CHANGE_PERIOD(timer, period, timeout) \
-	0
+		os_timer_change_period(timer, period)
 
 #define OS_TIMER_CHANGE_PERIOD_FROM_ISR(timer, period) \
-	0
+		 os_timer_change_period(timer, period)
 
 /**** Malloc ****/
 
